@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var Pusher = require('pusher');
+var Ably = require('ably');
 require('dotenv').config()
 
 var indexRouter = require('./routes/index');
@@ -40,21 +41,66 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-var pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID,
-  key: process.env.PUSHER_API_KEY,
-  secret: process.env.PUSHER_SECRET,
-  cluster: 'eu',
-  encrypted: true
-});
+let counter = 1;
+const ids = [
+  '5e0e7faefdddfff5b48b45eA',
+  '5e0e7faefdddfff5b48b45eB',
+  '5e0e7faefdddfff5b48b45eC',
+  '5e0e7faefdddfff5b48b45eD',
+  '5e0e7faefdddfff5b48b45eE',
+  '5e0e7faefdddfff5b48b45eF',
+  '5e0e7faefdddfff5b48b45eG',
+  '5e0e7faefdddfff5b48b45eH',
+  '5e0e7faefdddfff5b48b45eI',
+  '5e0e7faefdddfff5b48b45eJ',
+  '5e0e7faefdddfff5b48b45eK',
+  'fake'
+];
 
-let counter = 0;
+//*******************************************************//
+//************************ Pusher ***********************//
+//*******************************************************//
+// var pusher = new Pusher({
+//   appId: process.env.PUSHER_APP_ID,
+//   key: process.env.PUSHER_API_KEY,
+//   secret: process.env.PUSHER_SECRET,
+//   cluster: 'eu',
+//   encrypted: true
+// });
+
+// setInterval(() => {
+//   pusher.trigger('test_em_portada_refresh', 'em_portada_refresh_event', { payload: [{
+//     "id": ids[counter - 1],
+//     "cintillo": "Noticia " + counter,
+//     "titulo": "Lorem fistrum ahorarr a peich sexuarl me cago en tus muelas.",
+//     "isPremium": counter % 2 === 0 ? true : false
+//   }]});
+//   if(counter < 12) counter++;
+//   else counter = 1;
+// }, 4 * 1000);
+//*******************************************************//
+//************************ Pusher ***********************//
+//*******************************************************//
+
+//*******************************************************//
+//************************* Ably ************************//
+//*******************************************************//
+var ably = new Ably.Realtime(process.env.ABLY_API_KEY);
+var channel = ably.channels.get('em_portada_refresh');
+
+// Publish a message to the test channel
 setInterval(() => {
-  pusher.trigger('my-channel', 'my-event', {
-    "id": "1234567890",
-    "title": "Noticia " + counter
-  });
-  counter++;
-}, 10 * 1000);
+  channel.publish('em_portada_refresh_event', { payload: [{
+    "id": ids[counter - 1],
+    "cintillo": "Noticia " + counter,
+    "titulo": "Lorem fistrum ahorarr a peich sexuarl me cago en tus muelas.",
+    "isPremium": counter % 2 === 0 ? true : false
+  }] });
+  if(counter < 12) counter++;
+  else counter = 1;
+}, 1 * 1000);
+//*******************************************************//
+//************************* Ably ************************//
+//*******************************************************//
 
 module.exports = app;
