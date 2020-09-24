@@ -93,8 +93,13 @@ setInterval(() => {
   channel.publish('em_portada_refresh_event', { payload: [{
     "id": ids[counter - 1],
     "cintillo": "Noticia " + counter,
-    "titulo": "Lorem fistrum ahorarr a peich sexuarl me cago en tus muelas.",
-    "isPremium": counter % 2 === 0 ? true : false
+    "titulo": "Lorem fistrum ahorarr a peich sexuarl me cago en tus muelas...",
+    "isPremium": counter % 2 === 0 ? true : false,
+    "section": "ESPAÑA",
+    "source": "JUANMA LAMET",
+    "url": generateImagesUrls(counter),
+    "largeImage": largeImage(counter),
+    "timestamp": new Date()
   }] });
   if(counter < 12) counter++;
   else counter = 1;
@@ -102,5 +107,24 @@ setInterval(() => {
 //*******************************************************//
 //************************* Ably ************************//
 //*******************************************************//
+
+function generateImagesUrls(counter) {
+    if(counter % 5 === 0) {
+        return "https://res.cloudinary.com/dlmrvaeyh/image/upload/v1600704266/largeJs.svg";
+    } else if(counter % 3 === 1) {
+        return "adsasfa";
+    } else if(counter % 4 === 1) {
+        return "";
+    } else {
+        return "https://res.cloudinary.com/dlmrvaeyh/image/upload/v1588156326/marcomonzon/js-logo.svg";
+    }
+}
+
+function largeImage(counter) {
+    if(counter % 5 === 0) {
+        return true;
+    }
+    return false;
+}
 
 module.exports = app;
